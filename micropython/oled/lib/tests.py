@@ -2,7 +2,7 @@ import lib.sh1107 as sh1107
 import time
 import sys
 from types.types import Sizes
-from lib.stringPoly import ljust
+from lib.stringPoly import ljust, cleanLastNChar
 
 COLORS={
   "BLACK":0,
@@ -12,6 +12,9 @@ COLORS={
 class Test:
    display: sh1107.SH1107_SPI
    sizes: Sizes
+   PREFIX: str = "-- Test: "
+   STATE_RUNNING: str  = "RUNNING"
+   STATE_DONE: str = "DONE"
 
    def __init__(self, display:sh1107.SH1107_SPI, sizes: Sizes) -> None:
      super().__init__()
@@ -27,12 +30,12 @@ class Test:
     self.display.show()
 
    def log(self, nameTest: str, prefix: str = "-- Test: ", suffix:str = "."):
-      nameTest = ljust(nameTest, 20, suffix)
-      text: str = f"{prefix} {nameTest}"
-      print(text, end='')
+      nameTestPadded = ljust(nameTest, 20, suffix)
+      print(prefix + nameTestPadded + self.STATE_RUNNING, end="")
 
-   def endLog(self, suffix:str = "DONE"):
-      print(suffix, end='\n')
+   def endLog(self):
+      cleanLastNChar(self.STATE_RUNNING)
+      print(self.STATE_DONE)
 
    def exit(self, code = 0):
     sys.exit(code)
@@ -46,7 +49,7 @@ class TestComplex(Test):
         )
 
   def simple(self):
-    self.log('Simple')
+    self.log(nameTest='Simple')
     self.display.sleep(False)
     self.display.fill(0)
     self.display.text('SH1107', 0, 0, 1)
