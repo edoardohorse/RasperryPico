@@ -3,5 +3,5 @@ class Sizes:
   width: int
 
   def __init__(self, width: int, height:int) -> None:
-    width = width
-    height = height
+    self.width = width
+    self.height = height

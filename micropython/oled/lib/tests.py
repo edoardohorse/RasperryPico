@@ -30,7 +30,7 @@ class Test:
     self.display.show()
 
    def log(self, nameTest: str, prefix: str = "-- Test: ", suffix:str = "."):
-      nameTestPadded = ljust(nameTest, 20, suffix)
+      nameTestPadded = ljust(nameTest, 30, suffix)
       print(prefix + nameTestPadded + self.STATE_RUNNING, end="")
 
    def endLog(self):
@@ -103,37 +103,54 @@ class TestComplex(Test):
     for i in range (0, 32, 4):
       self.display.triangle(0+3*i, i, 127-i, i, 127-i, 127-3*i, c=COLORS['WHITE'])
       self.display.show()
-      for i in range (0, 32, 4):
-          self.display.triangle(i, 0+3*i, i, 127-i, 127-3*i, 127-i, c=COLORS['WHITE'])
-          self.display.show()
-      time.sleep(2)
-      self.display.fill(0)
-  #     display.show()
-  #     display.triangle(0, 0, 0, 127, 127, 127, c=COLORS['WHITE'], f=True) 
-  #     display.show()
-  #     time.sleep(2)
-      self.display.fill(0)
-      self.display.show()
-      for i in range (0, 64, 4):
-          self.display.circle(64, 64, 64-i , c=COLORS['WHITE'])
-          self.display.show()
-      time.sleep(2)
-      self.display.fill(0)
-      self.display.show()
-      for i in range (0, 128, 32):
-          for j in range (0, 128, 32):
-              self.display.rect(i, j, 32, 32, c=(i+j)//32 % 2, f=True)
-              self.display.show()
-              self.display.circle(i+16, j+16, 15 , c=((i+j)//32 +1) % 2, f=True)
-              self.display.show()
-      time.sleep(2)
+
+    for i in range (0, 32, 4):
+        self.display.triangle(i, 0+3*i, i, 127-i, 127-3*i, 127-i, c=COLORS['WHITE'])
+        self.display.show()
+    time.sleep(2)
+    self.display.fill(0)
+#     display.show()
+#     display.triangle(0, 0, 0, 127, 127, 127, c=COLORS['WHITE'], f=True) 
+#     display.show()
+#     time.sleep(2)
+    self.display.fill(0)
+    self.display.show()
+    for i in range (0, 64, 4):
+        self.display.circle(64, 64, 64-i , c=COLORS['WHITE'])
+        self.display.show()
+    time.sleep(2)
+    self.display.fill(0)
+    self.display.show()
+    for i in range (0, 128, 32):
+        for j in range (0, 128, 32):
+            self.display.rect(i, j, 32, 32, c=(i+j)//32 % 2, f=True)
+            self.display.show()
+            self.display.circle(i+16, j+16, 15 , c=((i+j)//32 +1) % 2, f=True)
+            self.display.show()
+    time.sleep(2)
 
     self.endLog() 
     return self
+  
+  def contrastTest(self):
+    self.log(nameTest="Contrast Test")
+    for i in range (0, 256):
+      self.display.contrast(i)
+      contrast_text='contrast: '+str(i)
+      print(contrast_text)
+      # self.display.fill_rect(16,int(self.sizes.height/2),96,8,0)
+      self.display.text(str(contrast_text), 16, 0, 1)
+      self.display.show()
+      time.sleep_ms(25)
+      self.clear()
+    
+    self.endLog()
+    return self
 
   def runTests(self):
-    self.simple()
-    self.count0to10()
-    self.bigText().exit()
-    self.drawTrianglesAndCircles()
+    # self.simple()
+    # self.count0to10()
+    # self.bigText()
+    # self.drawTrianglesAndCircles()
+    self.contrastTest().exit()
     return self
