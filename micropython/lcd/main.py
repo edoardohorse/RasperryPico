@@ -15,10 +15,14 @@ def init():
     # check the docs of your device for further details and pin infos
     i2c = I2C(0, scl=Pin(SCL), sda=Pin(SDA), freq=400000)
     lcd = LCD(addr=I2C_ADDR, cols=NUM_COLS, rows=NUM_ROWS, i2c=i2c)
+    lcd.backlight()
+    print("Has backlight?: "+str(lcd.get_backlight()))
 
 
     lcd.begin()
     lcd.print("Hello World")
+    lcd.set_cursor(row=1, col=0)
+    lcd.print("Hello World2")
 
 def checkDisplay():
     i2c = I2C(0, sda=Pin(SDA), scl=Pin(SCL))
