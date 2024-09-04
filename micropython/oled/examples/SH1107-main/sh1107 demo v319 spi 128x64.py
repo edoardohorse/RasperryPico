@@ -5,12 +5,12 @@ print('starting test')
 
 # from machine import Pin, I2C
 from machine import Pin, SPI
-import lib.sh1107 as sh1107
+import sh1107
 print('dir sh1107: ', dir(sh1107))
 import gc
 import sys
 import time #as time
-import lib.framebuf2 as framebuf
+import framebuf
 import array
 
 
@@ -25,7 +25,6 @@ import array
 # 
 # time.sleep(2)
 
-exit
 # full test code
 print('version ',sys.implementation)
 print('Initial free: {} allocated: {}'.format(gc.mem_free(), gc.mem_alloc()))
@@ -298,5 +297,4 @@ display.show()
 time.sleep(3)
 
 display.poweroff()
-
 

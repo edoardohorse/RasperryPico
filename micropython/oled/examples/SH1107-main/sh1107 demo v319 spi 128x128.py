@@ -5,12 +5,12 @@ print('starting test')
 
 # from machine import Pin, I2C
 from machine import Pin, SPI
-import lib.sh1107 as sh1107
+import sh1107
 print('dir sh1107: ', dir(sh1107))
 import gc
 import sys
 import time #as time
-import lib.framebuf2 as framebuf
+import framebuf
 import array
 
 
@@ -25,13 +25,12 @@ import array
 # 
 # time.sleep(2)
 
-exit
 # full test code
 print('version ',sys.implementation)
 print('Initial free: {} allocated: {}'.format(gc.mem_free(), gc.mem_alloc()))
 spi1 = SPI(1, baudrate=1_000_000, sck=Pin(14), mosi=Pin(15), miso=Pin(12))
 print('SPI created: {} allocated: {}'.format(gc.mem_free(), gc.mem_alloc()))
-display = sh1107.SH1107_SPI(128, 64, spi1, Pin(21), Pin(20), Pin(13), rotate=0)
+display = sh1107.SH1107_SPI(128, 128, spi1, Pin(21), Pin(20), Pin(13), rotate=0)
 print('display created: {} allocated: {}'.format(gc.mem_free(), gc.mem_alloc()))
 
 
@@ -298,5 +297,4 @@ display.show()
 time.sleep(3)
 
 display.poweroff()
-
 
