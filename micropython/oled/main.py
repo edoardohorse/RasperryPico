@@ -12,6 +12,8 @@ import sys
 import time #as time
 import lib.framebuf2 as framebuf
 import array
+from types.types import Sizes
+from lib.tests import TestComplex
 
 DC = 8
 RST = 12
@@ -22,7 +24,9 @@ WIDTH = 128
 HEIGHT = 64
 ROTATE = 180
 
-display: sh1107.SH1107_SPI = None
+SIZES = Sizes(width = WIDTH, height= HEIGHT)
+
+display: sh1107.SH1107_SPI
 spi: SPI = None
 
 # init rasperry and display OLED in global vars
@@ -58,68 +62,31 @@ def testSimple():
 
   sys.exit()
 
-def testComplex():
-  global display, spi
+def runTestComplex():
+  global display, spi, HEIGHT, SIZES
+  
+  
   # full test code
   print('version ',sys.implementation)
   print('Initial free: {} allocated: {}'.format(gc.mem_free(), gc.mem_alloc()))
   print('SPI created: {} allocated: {}'.format(gc.mem_free(), gc.mem_alloc()))
   print('display created: {} allocated: {}'.format(gc.mem_free(), gc.mem_alloc()))
 
+  
+  
+    ## common I2C and SPI test code below ##
 
-  ## common I2C and SPI test code below ##
+  testComplex = TestComplex(display= display, sizes=SIZES)
 
-  display.sleep(False)
-  display.fill(0)
-  display.text('SH1107', 0, 0, 1)
-  display.text('driver', 0, 8, 1)
-  display.show()
-  time.sleep(1)
+  # sys.exit()
 
-  display.fill(0)
-  display.show()
   if sh1107._fb_variant == 2:
-      for i in range(17):
-          display.large_text(str(i % 10), 0, 0, max(i,1), c=1, r=90*i)
-          display.show()
-          time.sleep(0.1)
-          display.fill(0)
-      for i in range(5):
-          for j in range(5):
-              display.large_text(str("big text"), (i) % 2 *56, (i+1) % 2 *56, 2, 1, 90*i, 90*j)
-              display.show()
-              time.sleep(.2)
-              display.fill(0)
-      print('framebuf2 framebuffer extension tests: triangles and circles')
-      for i in range (0, 32, 4):
-          display.triangle(0+3*i, i, 127-i, i, 127-i, 127-3*i, c=1)
-          display.show()
-      for i in range (0, 32, 4):
-          display.triangle(i, 0+3*i, i, 127-i, 127-3*i, 127-i, c=1)
-          display.show()
-      time.sleep(2)
-      display.fill(0)
-  #     display.show()
-  #     display.triangle(0, 0, 0, 127, 127, 127, c=1, f=True) 
-  #     display.show()
-  #     time.sleep(2)
-      display.fill(0)
-      display.show()
-      for i in range (0, 64, 4):
-          display.circle(64, 64, 64-i , c=1)
-          display.show()
-      time.sleep(2)
-      display.fill(0)
-      display.show()
-      for i in range (0, 128, 32):
-          for j in range (0, 128, 32):
-              display.rect(i, j, 32, 32, c=(i+j)//32 % 2, f=True)
-              display.show()
-              display.circle(i+16, j+16, 15 , c=((i+j)//32 +1) % 2, f=True)
-              display.show()
-      time.sleep(2)
-      display.fill(0)
-      display.show()
+      testComplex.runTests().exit()
+      # testComplex.count0to10().exit()
+      
+      # testComplex.bigText().exit()
+
+      # testComplex.drawTrianglesAndCircles().exit()
 
 
   #display.sleep(False)
@@ -334,4 +301,5 @@ def testComplex():
 
 if __name__ == "__main__":
     init()
-    testComplex()
+    
+    runTestComplex()	
