@@ -364,6 +364,10 @@ class SH1107(framebuf.FrameBuffer):
             res(1)
             time.sleep_ms(20)  # sleep for 20 milliseconds
 
+    # full clear display
+    def clear(self):
+      self.fill(0)
+      self.show()
 class SH1107_I2C(SH1107):
     def __init__(self, width, height, i2c, res=None, address=0x3d,
                  rotate=0, external_vcc=False, delay_ms=200):

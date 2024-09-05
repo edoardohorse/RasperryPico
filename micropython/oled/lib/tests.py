@@ -25,9 +25,7 @@ class Test:
    def run(self):
      pass
 
-   def clear(self):
-    self.display.fill(0)
-    self.display.show()
+  
 
    def log(self, nameTest: str, prefix: str = "-- Test: ", suffix:str = "."):
       nameTestPadded = ljust(nameTest, 30, suffix)
@@ -142,8 +140,7 @@ class TestComplex(Test):
       self.display.text(str(contrast_text), 16, 0, 1)
       self.display.show()
       time.sleep_ms(25)
-      self.clear()
-    
+      # self.display.clear()
     self.endLog()
     return self
 
