@@ -364,10 +364,23 @@ class SH1107(framebuf.FrameBuffer):
             res(1)
             time.sleep_ms(20)  # sleep for 20 milliseconds
 
+    # clear a text a certain position
+    def clearText(self, text: str, x: int, y: int, module: int = 8):
+      text_width = len(text) * module
+
+      # Iterate over the area where the text was drawn and clear the pixels
+      for i in range(text_width):
+          for j in range(module):
+              super().pixel(x + i, y + j, 0)  # Clear pixel (set to 0)
+
+      self.register_updates(y, y + 7)
+      self.show()  # Update the display to reflect the changes
+
     # full clear display
     def clear(self):
       self.fill(0)
       self.show()
+
 class SH1107_I2C(SH1107):
     def __init__(self, width, height, i2c, res=None, address=0x3d,
                  rotate=0, external_vcc=False, delay_ms=200):
