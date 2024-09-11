@@ -1,5 +1,5 @@
 from machine import Pin, PWM
-from time import sleep
+from time import sleep, sleep_ms
 import sys
 
 # Initialize PWM for each color channel of an RGB LED
@@ -21,11 +21,32 @@ def set_color(c, m, y):
     yellow.duty_u16(y)  # Blue intensity
 
 
-set_color(MAX, 0, 0)
-sleep(1)
-set_color(0, MAX, 0)
-sleep(1)
-set_color(0, 0, MAX)
+""" set_color(MAX,0,0)
+sys.exit() """
+
+STEP = 5000
+MS = 25
+
+c = 0
+m = 0
+y = 0
+
+for c in range(0, MAX,STEP):
+  print(c,y,m) 
+  set_color(c, y, m)
+  sleep_ms(MS)
+  c = 0
+
+  for y in range(0, MAX,STEP):
+    print(c,y,m) 
+    set_color(c, y, m)
+    sleep_ms(MS)
+
+    y = 0
+    for m in range(0, MAX,STEP):
+      print(c,y,m) 
+      set_color(c, y, m)
+      sleep_ms(MS)
 
 sys.exit()
 
