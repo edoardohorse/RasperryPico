@@ -159,7 +159,7 @@ def _setPower(state: str):
       
     msg = {'id': 1, 'method': 'set_power', 'params': [state, 'smooth', 500]}
     
-    print(f"Attemptin turning {state}...")
+    print(f"Attempting turning {state}...")
     return _sendMessage(msg=msg)
     
 
@@ -176,3 +176,9 @@ def off():
 
 def on():
     _setPower("on")
+
+def toggle():
+    msg = {'id': 1, 'method': 'toggle', 'params': []}
+    
+    print(f"Attempting toggling")
+    return _sendMessage(msg=msg)
