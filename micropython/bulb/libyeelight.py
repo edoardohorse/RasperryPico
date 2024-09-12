@@ -133,28 +133,44 @@ def _initSocketTCP(host: str, port: int):
     sock.settimeout(5)
     return sock
 
-def _setPower(state: str):
+def _sendMessage(msg:dict):
     global sockTCP
 
     if sockTCP is None:
         return print("No socket TCP connection")
     
-    msg = {'id': 1, 'method': 'set_power', 'params': [state, 'smooth', 500]}
     data = json.dumps(msg)+ '\r\n'
-    
-    print("Attemptin turning on...")
-    
+
     # send command
     sockTCP.sendall(data.encode('utf-8'))
 
-    """ start_time = time.time()
-    while time.time() - start_time < 5:  # Listen for 5 seconds
-        try:
-            data, addr = sock.recvfrom(1024)
-            print(f"\nResponse {data.decode()}:")
-        except socket.timeout:
-            continue """
     
+    start_time = time.time()
+    while time.time() - start_time < 5:  # Listen for 5 seconds
+        # try:
+        data, addr = sockTCP.recvfrom(1024)
+        dataDecoded = data.decode()
+        # print(f"\nResponse {dataDecoded}:")
+        return json.loads(dataDecoded)
+        """ except TimeoutError:
+            continue """
+
+def _setPower(state: str):
+      
+    msg = {'id': 1, 'method': 'set_power', 'params': [state, 'smooth', 500]}
+    
+    print(f"Attemptin turning {state}...")
+    return _sendMessage(msg=msg)
+    
+
+
+def getPower():
+    msg = {"id":1,"method":"get_prop","params":["power", "not_exist", "bright"]}
+    print("Getting info of power... ",end="")
+    res = _sendMessage(msg=msg)
+    print(str(res["result"][0] == "on"))
+    return res
+
 def off():
     _setPower("off")
 
