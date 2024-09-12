@@ -1,14 +1,14 @@
 
 import sys
-from libyeelight import discover_bulb
-import machine
-import network
+from libyeelight import *
+# import machine
+# import network
 import time
 
 ssid = 'heidi sui monti'
 password = 'fioccodineve'
 
-def check_connection() -> bool:
+""" def check_connection() -> bool:
   wlan = network.WLAN(network.STA_IF)
   led = machine.Pin("LED", machine.Pin.OUT)
   led.off()
@@ -29,10 +29,13 @@ def connect():
     while wlan.isconnected() == False:
         print('Waiting for connection...')
         time.sleep(1)
-
+ """
 
 if __name__ == "__main__":
-    connect()
-    if check_connection():
-      response = discover_bulb()
+    # connect()
+    # if check_connection():
+    response = discover_bulb()
+    print(response["location"])
+    off()
+    # on()
       # print(response[""])

@@ -1,38 +1,14 @@
+""" https://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf """
+
 import socket
 import time
+import json
 
-""" 
-SSDP response example
-{
-  "status": {
-    "version": "HTTP/1.1",
-    "code": 200,
-    "message": "OK"
-  },
-  "cache_control": "max-age=3600",
-  "date": "",
-  "ext": "",
-  "location": "192.168.3.156:55443",
-  "server": "POSIX UPnP/1.0 YGLC/1",
-  "id": "0x000000000eda65f5",
-  "model": "colora",
-  "fw_ver": "9",
-  "support": "get_prop set_default set_power toggle set_bright set_scene cron_add cron_get cron_del start_cf stop_cf set_ct_abx adjust_ct set_name set_adjust adjust_bright adjust_color set_rgb set_hsv set_music udp_sess_new udp_sess_keep_alive udp_chroma_sess_new",
-  "power": "on",
-  "bright": 100,
-  "color_mode": "2",
-  "ct": 4000,
-  "rgb": 16711680,
-  "hue": 359,
-  "sat": 100,
-  "name": ""
-}
- """
-
-
-
+sockTCP: socket.socket = None
 
 def discover_bulb() -> dict | None:
+  global sockTCP
+
   SSDP_ADDR = "239.255.255.250"
   SSDP_PORT = 1982
   SSDP_MX = 2
@@ -73,6 +49,10 @@ def discover_bulb() -> dict | None:
           responseDecoded = data.decode()
           responseParsed = parse_ssdp_response(responseDecoded)
           print(responseParsed["status"])
+
+          host, port  = responseParsed["location"].split(":")
+          sockTCP = _initSocketTCP(host, int(port))
+
           return responseParsed
       except socket.timeout:
           continue
@@ -83,8 +63,33 @@ def discover_bulb() -> dict | None:
   return None
 
 
-    
-
+""" 
+SSDP response example
+{
+  "status": {
+    "version": "HTTP/1.1",
+    "code": 200,
+    "message": "OK"
+  },
+  "cache_control": "max-age=3600",
+  "date": "",
+  "ext": "",
+  "location": "192.168.3.156:55443",
+  "server": "POSIX UPnP/1.0 YGLC/1",
+  "id": "0x000000000eda65f5",
+  "model": "colora",
+  "fw_ver": "9",
+  "support": "get_prop set_default set_power toggle set_bright set_scene cron_add cron_get cron_del start_cf stop_cf set_ct_abx adjust_ct set_name set_adjust adjust_bright adjust_color set_rgb set_hsv set_music udp_sess_new udp_sess_keep_alive udp_chroma_sess_new",
+  "power": "on",
+  "bright": 100,
+  "color_mode": "2",
+  "ct": 4000,
+  "rgb": 16711680,
+  "hue": 359,
+  "sat": 100,
+  "name": ""
+}
+ """
 def parse_ssdp_response(response):
     lines = response.strip().split('\n')
     result = {}
@@ -121,3 +126,37 @@ def parse_ssdp_response(response):
             result['content'] = result.get('content', '') + line + '\n'
     
     return result
+
+def _initSocketTCP(host: str, port: int):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((host, port))
+    sock.settimeout(5)
+    return sock
+
+def _setPower(state: str):
+    global sockTCP
+
+    if sockTCP is None:
+        return print("No socket TCP connection")
+    
+    msg = {'id': 1, 'method': 'set_power', 'params': [state, 'smooth', 500]}
+    data = json.dumps(msg)+ '\r\n'
+    
+    print("Attemptin turning on...")
+    
+    # send command
+    sockTCP.sendall(data.encode('utf-8'))
+
+    """ start_time = time.time()
+    while time.time() - start_time < 5:  # Listen for 5 seconds
+        try:
+            data, addr = sock.recvfrom(1024)
+            print(f"\nResponse {data.decode()}:")
+        except socket.timeout:
+            continue """
+    
+def off():
+    _setPower("off")
+
+def on():
+    _setPower("on")
