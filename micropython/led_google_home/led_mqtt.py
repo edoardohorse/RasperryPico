@@ -7,7 +7,13 @@ from umqtt_simple import MQTTClient
 SSID = "iliadbox-20274E"
 PASSWORD = "k7bvzq2frkqwddswqnvnws"
 MQTT_BROKER = "192.168.1.49"
-TOPIC = "pico/led"
+TOPICS={
+  "set_state":"pico/led",
+  "get_state":"pico/led/state"
+}
+
+VALUE_ON = 1
+VALUE_OFF = 0
 
 MQTT_USER ={
   id:"mqtt_user",
@@ -35,19 +41,22 @@ def printInfo():
   global wlan
   ip = wlan.ifconfig()[0]
   log(f"Connected Wifi! Your IP is: {ip}")
-  print(f"USER: {MQTT_USER[id]}\nBROKER_SERVER: {MQTT_BROKER}\nTOPIC: {TOPIC}")
+  print(f"USER: {MQTT_USER[id]}\nBROKER_SERVER: {MQTT_BROKER}\nTOPIC: {TOPICS}")
 
   # MQTT Callback
 def on_message(topic, msg):
   message = msg.decode()
-  log(f"Received message of topic: {topic.decode()}")
-  
-  if msg == b"on":
+  log(f"Received message of topic: {topic.decode()} -> {message}")
+
+
+  if topic.decode() == TOPICS["set_state"]:
+    if message == str(VALUE_ON):
       log("Led on")
-      led.value(1)
-  elif msg == b"off":
+      led.value(VALUE_ON)
+    elif message == str(VALUE_OFF):
       log("Led off")
-      led.value(0)
+      led.value(VALUE_OFF)
+        
 
 def init():
   global led, client
@@ -56,7 +65,7 @@ def init():
   client = MQTTClient(client_id=CLIENT_ID, server=MQTT_BROKER,user=MQTT_USER[id], password=MQTT_USER[PASSWORD])
   client.set_callback(on_message)
   client.connect()
-  client.subscribe(TOPIC)
+  client.subscribe(TOPICS["set_state"])
   print("Listening for MQTT messages...")
 
 def main():
@@ -64,6 +73,13 @@ def main():
   printInfo()
   init()
   while True:
-      client.wait_msg()
+    client.wait_msg()
+
+      
+    # You can also send periodic state updates
+    # Example: sending an "ON" or "OFF" state periodically
+    time.sleep(2)
+    value_led = str(VALUE_ON if led.value() else VALUE_OFF)
+    client.publish(TOPICS["get_state"], value_led, retain=True)
 
 main()
