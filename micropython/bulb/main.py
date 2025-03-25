@@ -50,9 +50,9 @@ def mainLoop():
       btnLoop()
 
 def button_pressed():
-    # print("Button pressed!")
+    print("Button pressed!")
     # toggleBulb()
-    toggle()
+    # toggle()
     
 def toggleBulb():
   global isOn
@@ -78,8 +78,8 @@ if __name__ == "__main__":
 
     connect()
     if check_connection():
-      response = discover_bulb()
-      print(response["location"])
+      # response = discover_bulb()
+      # print(response["location"])
       # resPower = getPower()
       # isOn = resPower["result"][0] == "on"
       # print(isOn)
