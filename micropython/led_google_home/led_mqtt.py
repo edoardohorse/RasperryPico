@@ -6,12 +6,13 @@ from umqtt_simple import MQTTClient
 SSID = "iliadbox-20274E"
 PASSWORD = "k7bvzq2frkqwddswqnvnws"
 MQTT_BROKER = "192.168.1.49"
-TOPIC = b"home/pico/led"
+TOPIC = "home/pico/led"
 
-mqtt_user ={
+MQTT_USER ={
   id:"mqtt_user",
   PASSWORD:"Jkd882HnjrqECH"
 } 
+CLIENT_ID="pico"
 
 
 led = machine.Pin("LED", machine.Pin.OUT)
@@ -25,7 +26,10 @@ while not wlan.isconnected():
 
     
 ip = wlan.ifconfig()[0]
-print(f"Connected! IP: {ip}")
+
+def printInfo():
+  print(f"Connected Wifi IP! Your IP is: {ip}")
+  print(f"USER: {MQTT_USER[id]}\nBROKER_SERVER: {MQTT_BROKER}\nTOPIC: {TOPIC}")
 
 def mqtt_callback(topic, msg):
     if msg == b"on":
@@ -33,7 +37,8 @@ def mqtt_callback(topic, msg):
     elif msg == b"off":
         led.value(0)
 
-client = MQTTClient(cliend_id="pico", server=MQTT_BROKER,user=mqtt_user[id], password=mqtt_user[PASSWORD])
+printInfo()
+client = MQTTClient(client_id=CLIENT_ID, server=MQTT_BROKER,user=MQTT_USER[id], password=MQTT_USER[PASSWORD])
 client.set_callback(mqtt_callback)
 client.connect()
 client.subscribe(TOPIC)
