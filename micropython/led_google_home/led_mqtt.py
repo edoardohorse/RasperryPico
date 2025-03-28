@@ -6,7 +6,7 @@ from umqtt_simple import MQTTClient
 
 SSID = "iliadbox-20274E"
 PASSWORD = "k7bvzq2frkqwddswqnvnws"
-MQTT_BROKER = "192.168.1.49"
+MQTT_BROKER = "homeassistant.local"
 TOPICS={
   "set_state":"pico/led",
   "get_state":"pico/led/state"
