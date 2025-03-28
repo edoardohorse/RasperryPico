@@ -57,6 +57,10 @@ def on_message(topic, msg):
       log("Led off")
       led.value(VALUE_OFF)
         
+def blink():
+  led.value(VALUE_ON)
+  time.sleep(1)
+  led.value(VALUE_OFF)
 
 def init():
   global led, client
@@ -69,17 +73,20 @@ def init():
   print("Listening for MQTT messages...")
 
 def main():
+  led.value(VALUE_ON)
   connectWifi()
   printInfo()
   init()
+  led.value(VALUE_OFF)
   while True:
     client.wait_msg()
 
       
     # You can also send periodic state updates
     # Example: sending an "ON" or "OFF" state periodically
-    time.sleep(2)
+    # time.sleep(2)
     value_led = str(VALUE_ON if led.value() else VALUE_OFF)
     client.publish(TOPICS["get_state"], value_led, retain=True)
 
-main()
+if __name__ == "__main__":
+  main()
